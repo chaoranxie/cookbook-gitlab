@@ -227,9 +227,19 @@ link "#{node['gitlab']['app_home']}/config/database.yml" do
   link_type :hard
 end
 
+
+#Install bundle for the new ruby
+#Fix issue https://github.com/atomic-penguin/cookbook-gitlab/issues/16
+gem_package "bundle" do
+    gem_binary("/usr/local/ruby/#{node['gitlab']['install_ruby']}/bin/gem")
+end
+
+
 # Install Gems with bundle install
 execute "gitlab-bundle-install" do
-  command "bundle install --without development test --deployment"
+  #Fix issue https://github.com/atomic-penguin/cookbook-gitlab/issues/16
+  #command "source /etc/profile.d/gitlab.sh ; bundle install --without development test postgres --deployment"
+  command " export PATH=/usr/local/ruby/#{node['gitlab']['install_ruby']}/bin:$PATH ; bundle install --without development test postgres --deployment"
   cwd node['gitlab']['app_home']
   user node['gitlab']['user']
   group node['gitlab']['group']
@@ -239,7 +249,9 @@ end
 
 # Setup sqlite database for Gitlab
 execute "gitlab-bundle-rake" do
-  command "bundle exec rake gitlab:app:setup RAILS_ENV=production"
+  #Fix issue https://github.com/atomic-penguin/cookbook-gitlab/issues/16
+  #command " source /etc/profile.d/gitlab.sh ; bundle exec rake gitlab:app:setup RAILS_ENV=production"
+  command " export PATH=/usr/local/ruby/#{node['gitlab']['install_ruby']}/bin:$PATH ; bundle exec rake gitlab:app:setup RAILS_ENV=production"
   cwd node['gitlab']['app_home']
   user node['gitlab']['user'] 
   group node['gitlab']['group']
