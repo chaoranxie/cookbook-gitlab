@@ -18,6 +18,15 @@
 # limitations under the License.
 #
 
+#Fixing issue where command "/var/git/gitolite/install -ln /var/git/bin" failed
+#https://github.com/atomic-penguin/cookbook-gitlab/issues/15
+package "perl-Time-HiRes" do
+
+  action :install
+end
+
+
+
 # Include cookbook dependencies
 %w{ ruby_build gitlab::gitolite build-essential
     readline sudo openssh xml zlib python::package python::pip
