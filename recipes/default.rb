@@ -23,7 +23,7 @@
 case node['platform']
 when "redhat","centos","amazon","scientific"
     case node['platform_version'].to_i
-    when 5
+    when 6
       #Fixing issue where command "/var/git/gitolite/install -ln /var/git/bin" failed
       #https://github.com/atomic-penguin/cookbook-gitlab/issues/15
       package "perl-Time-HiRes" do
